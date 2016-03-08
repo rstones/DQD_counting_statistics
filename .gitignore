@@ -1,0 +1,13 @@
+# ignore complied python files
+*.pyc
+
+# ignore temporary files
+*~
+
+# ignore pdf, png and eps files
+*.pdf
+*.eps
+*.png
+
+# ignore all files in data folder
+data/
