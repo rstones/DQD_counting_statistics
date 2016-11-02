@@ -49,5 +49,5 @@ for i,E in enumerate(epsilon_values):
 plt.subplot(121)
 plt.plot(epsilon_values, F2_values)
 plt.subplot(122)
-plt.plot(epsilon_values, steady_states.T[4])
+plt.plot(epsilon_values, Gamma_R*steady_states.T[2])
 plt.show()

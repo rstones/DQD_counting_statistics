@@ -21,7 +21,7 @@ F2 = np.zeros(bias_values.size)
 coherence = np.zeros(bias_values.size, dtype='complex')
 
 for i,v in enumerate(bias_values):
-    model.bias = v
+    model.bias = 2.*v
     ss = utils.stationary_state_svd(model.liouvillian(), model.density_vector_populations())
     current[i] = model.mean(ss)
     F2[i] = model.second_order_fano_factor(ss)

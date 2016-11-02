@@ -17,7 +17,7 @@ def F2(a1, a2, a0_prime, a1_prime):
 # def a2(Gamma_R, T_c, e):
 #     return (0.25*Gamma_R**3) + (7. * T_c**2 * Gamma_R) + (4. * e**2 * Gamma_R) + (1.25 * Gamma_R**2) + (4. * T_c**2) + (4. * e**2)
 
-small_Gamma_R = True
+small_Gamma_R = False
 
 if not small_Gamma_R:
 
