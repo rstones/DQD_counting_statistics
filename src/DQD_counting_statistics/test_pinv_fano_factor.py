@@ -6,31 +6,36 @@ Created on 26 Oct 2016
 import numpy as np
 import scipy.linalg as la
 import quant_mech.utils as utils
+import counting_statistics.counting_statistics as cs
 from DQD_counting_statistics.DQD_model import DQDModel
 
-model = DQDModel(remove_elements=True)
-model.Gamma_R = 1.e-4
+def analytic_R0(Gamma_L, Gamma_R):
+    return np.array([[Gamma_L**2 + Gamma_L*Gamma_R, -Gamma_R**2 - Gamma_L*Gamma_R],
+                     [-Gamma_L**2 - Gamma_L*Gamma_R, Gamma_R**2 + Gamma_L*Gamma_R]]) / (Gamma_L + Gamma_R)**3
 
-energy_gap_values = np.linspace(-10, 10, 100)
-fano_factor = np.zeros(energy_gap_values.size)
+def zero_freq_noise(liouvillian, jump_liouvillian, sys_dim, stationary_state, dv_pops, Gamma_L, Gamma_R):
+    J_1 = cs.differentiate_jump_matrix(jump_liouvillian)
+    Q = np.eye(sys_dim**2) - np.outer(stationary_state, dv_pops)
+    R0 = np.dot(Q, np.dot(la.pinv2(-liouvillian), Q)) #analytic_R0(Gamma_L, Gamma_R) # 
+    
+    noise = - cs.trace_density_vector(np.dot(cs.differentiate_jump_matrix(J_1), stationary_state), dv_pops) \
+                        - 2. * cs.trace_density_vector(np.dot(np.dot(np.dot(J_1, R0), J_1), stationary_state), dv_pops)
+    
+    return noise
 
-for i,E in enumerate(energy_gap_values):
-    model.bias = E
-    ss = utils.stationary_state_svd(model.liouvillian(0), model.density_vector_populations())
-    fano_factor[i] = model.second_order_fano_factor(ss)
-import matplotlib.pyplot as plt
-plt.plot(energy_gap_values, fano_factor)
-plt.show()
+def analytic_F2(Gamma_L, Gamma_R):
+    return (Gamma_L**2 + Gamma_R**2) / (Gamma_L + Gamma_R)**2
 
-# chi_values = np.linspace(-1, 1, 100)
-# cgf = []#np.zeros(chi_values.size)
-# for chi in chi_values:
-#     cgf.append(model.cumulant_generating_function_temp(chi))
-#     
-# print chi_values
-# print
-# print cgf
-#     
-# import matplotlib.pyplot as plt
-# plt.plot(chi_values, cgf)
-# plt.show()
+Gamma_L = 1.
+Gamma_R = 2.
+L = np.array([[-Gamma_L,Gamma_R],
+              [Gamma_L,-Gamma_R]])
+LJ = np.array([[0,Gamma_R],
+              [0,0]])
+dv_pops = np.array([1,1])
+ss = utils.stationary_state(L, dv_pops)
+print L
+print analytic_R0(Gamma_L, Gamma_R)
+print ss
+print zero_freq_noise(L, LJ, np.sqrt(2), ss, dv_pops, Gamma_L, Gamma_R) / (Gamma_R*ss[-1])
+print analytic_F2(Gamma_L, Gamma_R)

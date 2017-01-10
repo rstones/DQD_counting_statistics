@@ -42,6 +42,15 @@ for i,GR in enumerate(Gamma_R_values):
     num_F2[i] = model.second_order_fano_factor(ss)
     mean[i] = model.mean(ss)
     
+    if np.isclose(GR, 2, 0.02):
+        import scipy.linalg as la
+        np.set_printoptions(precision=3, linewidth=150, suppress=True)
+        print ss
+        Q = np.eye(4) - np.outer(ss, np.array([1., 0, 0, 1.]))
+        R0 = np.dot(Q, np.dot(la.pinv2(-model.liouvillian()).T, Q))
+        print Q
+        print R0
+    
 import matplotlib.pyplot as plt
 
 plt.subplot(121)

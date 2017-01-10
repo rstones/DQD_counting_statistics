@@ -35,7 +35,7 @@ def F2(Gamma_R, Gamma_L, epsilon, T_c):
     imag_rho_LR = steady_state[4]
     return 1. + (2. / (0.25*(Gamma_R**2)*Gamma_L + 2.*(T_c**2)*Gamma_L + 4.*(epsilon**2)*Gamma_L + (T_c**2)*Gamma_R)) \
                 * (-(T_c**2)*Gamma_R*rho_LL - (0.25*(Gamma_R**2)*Gamma_L + (T_c**2)*Gamma_R + 4.*(epsilon**2)*Gamma_L)*rho_RR \
-                 + 4.*T_c*epsilon*Gamma_L*real_rho_LR + T_c*Gamma_R*Gamma_L*imag_rho_LR), steady_state
+                 + 4.*T_c*epsilon*Gamma_L*real_rho_LR - T_c*Gamma_R*Gamma_L*imag_rho_LR), steady_state
     '''
     return 1. + (2. / (0.25*(Gamma_R**2)*Gamma_L + 2.*(T_c**2)*Gamma_L + 4.*(epsilon**2)*Gamma_L + (T_c**2)*Gamma_R)) \
         * ((4.*(T_c**2)*Gamma_R + 4.*(T_c**2)*Gamma_L)*(rho_RR**2) + (2.*(T_c**2)*Gamma_R + 4.*(T_c**2)*Gamma_L)*rho_RR*rho_LL + 4.*(T_c**2)*Gamma_R*rho_RR*rho_00 \
