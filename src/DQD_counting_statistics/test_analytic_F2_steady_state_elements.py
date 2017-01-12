@@ -10,7 +10,7 @@ import quant_mech.utils as utils
 
 #model = DQDModel(remove_elements=True)
 
-epsilon_values = np.linspace(-10, 10, 200)
+epsilon_values = np.linspace(-5, 5, 200)
 F2_values = np.zeros(epsilon_values.size)
 steady_states = np.zeros((epsilon_values.size, 5))
 
@@ -48,6 +48,8 @@ for i,E in enumerate(epsilon_values):
 
 plt.subplot(121)
 plt.plot(epsilon_values, F2_values)
+plt.xlim(-5,5)
 plt.subplot(122)
-plt.plot(epsilon_values, steady_states.T[4])
+plt.plot(epsilon_values, steady_states.T[3])
+plt.xlim(-5,5)
 plt.show()
