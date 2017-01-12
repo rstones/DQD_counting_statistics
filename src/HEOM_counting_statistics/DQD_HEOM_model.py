@@ -13,7 +13,8 @@ import quant_mech.utils as utils
 
 class DQDHEOMModel():
     
-    def __init__(self, Gamma_L, Gamma_R, bias, T_c, drude_reorg_energy=1.e-12, drude_cutoff=40., beta=1.):
+    def __init__(self, Gamma_L, Gamma_R, bias, T_c, drude_reorg_energy=1.e-12, drude_cutoff=40., beta=1., \
+                 num_matsubara_freqs=0, temperature_correction=True, sites_to_couple=np.array([0,1,1])):
         
         self.system_dimension = 3
         
@@ -34,12 +35,14 @@ class DQDHEOMModel():
         self.drude_reorg_energy = drude_reorg_energy
         self.drude_cutoff = drude_cutoff
         
-        self.num_matsubara_freqs = 2
-        self.temperature_correction = True
+        self.num_matsubara_freqs = num_matsubara_freqs
+        self.temperature_correction = temperature_correction
+        self.sites_to_couple = sites_to_couple
         self.heom_solver = HierarchySolver(self.system_hamiltonian(), self.drude_reorg_energy, self.drude_cutoff, \
                                            self.beta, self.jump_operators, self.jump_rates, \
                                            num_matsubara_freqs=self.num_matsubara_freqs, \
-                                           temperature_correction=self.temperature_correction)
+                                           temperature_correction=self.temperature_correction, \
+                                           sites_to_couple=self.sites_to_couple)
         self.truncation_level = 4
         self.heom_solver.truncation_level = self.truncation_level
         #self.construct_heom()
@@ -68,9 +71,10 @@ class DQDHEOMModel():
         self.heom_solver = HierarchySolver(self.system_hamiltonian(), self.drude_reorg_energy, self.drude_cutoff, \
                                            self.beta, self.jump_operators, self.jump_rates, \
                                            num_matsubara_freqs=self.num_matsubara_freqs, \
-                                           temperature_correction=self.temperature_correction)
+                                           temperature_correction=self.temperature_correction, \
+                                           sites_to_couple=self.sites_to_couple)
         self.heom_solver.truncation_level = self.truncation_level
-        return np.asarray(self.heom_solver.construct_hierarchy_matrix_super_fast().todense())
+        return np.asarray(self.heom_solver.construct_hierarchy_matrix_super_fast().todense(), dtype='complex128')
 
     '''
     Make this sparse eventually
