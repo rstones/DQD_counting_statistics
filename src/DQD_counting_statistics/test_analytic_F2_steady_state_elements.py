@@ -10,7 +10,7 @@ import quant_mech.utils as utils
 
 #model = DQDModel(remove_elements=True)
 
-epsilon_values = np.linspace(-5, 5, 200)
+epsilon_values = np.linspace(-10, 10, 200)
 F2_values = np.zeros(epsilon_values.size)
 steady_states = np.zeros((epsilon_values.size, 5))
 
@@ -35,7 +35,7 @@ def F2(Gamma_R, Gamma_L, epsilon, T_c):
     imag_rho_LR = steady_state[4]
     return 1. + (2. / (0.25*(Gamma_R**2)*Gamma_L + 2.*(T_c**2)*Gamma_L + 4.*(epsilon**2)*Gamma_L + (T_c**2)*Gamma_R)) \
                 * (-(T_c**2)*Gamma_R*rho_LL - (0.25*(Gamma_R**2)*Gamma_L + (T_c**2)*Gamma_R + 4.*(epsilon**2)*Gamma_L)*rho_RR \
-                 + 4.*T_c*epsilon*Gamma_L*real_rho_LR + T_c*Gamma_R*Gamma_L*imag_rho_LR), steady_state
+                 + 4.*T_c*epsilon*Gamma_L*real_rho_LR - T_c*Gamma_R*Gamma_L*imag_rho_LR), steady_state
     '''
     return 1. + (2. / (0.25*(Gamma_R**2)*Gamma_L + 2.*(T_c**2)*Gamma_L + 4.*(epsilon**2)*Gamma_L + (T_c**2)*Gamma_R)) \
         * ((4.*(T_c**2)*Gamma_R + 4.*(T_c**2)*Gamma_L)*(rho_RR**2) + (2.*(T_c**2)*Gamma_R + 4.*(T_c**2)*Gamma_L)*rho_RR*rho_LL + 4.*(T_c**2)*Gamma_R*rho_RR*rho_00 \
@@ -48,8 +48,6 @@ for i,E in enumerate(epsilon_values):
 
 plt.subplot(121)
 plt.plot(epsilon_values, F2_values)
-plt.xlim(-5,5)
 plt.subplot(122)
-plt.plot(epsilon_values, steady_states.T[3])
-plt.xlim(-5,5)
+plt.plot(epsilon_values, Gamma_R*steady_states.T[2])
 plt.show()

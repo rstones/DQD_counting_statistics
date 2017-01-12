@@ -4,7 +4,7 @@ Created on 8 Mar 2016
 @author: rstones
 '''
 import numpy as np
-from counting_statistics.counting_statistics import CountingStatistics
+#from counting_statistics_old.counting_statistics import CountingStatistics
 
 class DQDModel(CountingStatistics):
     
@@ -16,7 +16,7 @@ class DQDModel(CountingStatistics):
         self.tunnelling_coupling = 3.
         
         self.Gamma_L = 1.
-        self.Gamma_R = 1.
+        self.Gamma_R = 1.e-4
         
         # call __init__ of super class to instantiate attributes required for counting statistics calculations
         CountingStatistics.__init__(self, remove_elements)
@@ -36,3 +36,28 @@ class DQDModel(CountingStatistics):
     
     def jump_operators(self):
         return self.lead_operators()
+    
+import quant_mech.utils as utils
+model = DQDModel()
+model.bias = 1.
+model.Gamma_L = 1.
+model.Gamma_R = 2.
+print model.liouvillian()
+bias_values = np.linspace(-10,10,100)
+ 
+F2 = np.zeros(bias_values.size)
+current = np.zeros(bias_values.size)
+ 
+for i,E in enumerate(bias_values):
+    model.bias = 2.*E
+    ss = utils.stationary_state_svd(model.liouvillian(0), np.array([1., 0, 0, 0, 1., 0, 0, 0, 1.]))
+    F2[i] = model.second_order_fano_factor(ss)
+    current[i] = model.Gamma_R * ss[-1]
+     
+import matplotlib.pyplot as plt
+ 
+plt.subplot(121)
+plt.plot(bias_values, F2)
+plt.subplot(122)
+plt.plot(bias_values, current)
+plt.show()
