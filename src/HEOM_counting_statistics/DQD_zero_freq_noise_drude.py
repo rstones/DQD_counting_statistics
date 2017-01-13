@@ -12,13 +12,14 @@ Gamma_L = 0.1 # meV
 Gamma_R = 2.5e-3 # meV
 bias = 0
 T_c = 0.1 # meV
-temperature = [1.4, 2.7, 12.] # Kelvin
+temperature = [1.4, 2.7, 18.] # Kelvin
 k_B = constants.physical_constants["Boltzmann constant in eV/K"][0] * 1.e3 # meV / Kelvin
 beta = [1. / (k_B * T) for T in temperature]
 reorg_energy = 0.00147
 cutoff = 5. # meV
 
-model = DQDHEOMModel(Gamma_L, Gamma_R, bias, T_c, beta=beta[0], drude_reorg_energy=reorg_energy, drude_cutoff=cutoff)
+model = DQDHEOMModel(Gamma_L, Gamma_R, bias, T_c, beta=beta[0], drude_reorg_energy=reorg_energy, drude_cutoff=cutoff, \
+                     num_matsubara_freqs=0, temperature_correction=True, sites_to_couple=np.array([0,1,1]))
 bias_values = np.linspace(-1, 1, 100)
 F2 = np.zeros((len(beta)+1, bias_values.size))
 
@@ -38,6 +39,8 @@ for i,E in enumerate(bias_values):
     model.bias = E
     solver = FCSSolver(model.heom_matrix(), model.jump_matrix(), model.dv_pops)
     F2[0,i] = solver.second_order_fano_factor(0)
+    
+np.savez('../../data/HEOM_F2_bias_drude_no_phonon.npz', bias_values=bias_values, F2=F2[0])
     
 import matplotlib.pyplot as plt
 import matplotlib
