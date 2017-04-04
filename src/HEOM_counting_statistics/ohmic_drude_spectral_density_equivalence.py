@@ -10,9 +10,14 @@ def ohmic_spectral_density(omega, g, cutoff):
 def drude_spectral_density(omega, reorg_energy, cutoff):
     return (2. * omega * reorg_energy * cutoff) / (omega**2 + cutoff**2)
 
+def underdamped_brownian_oscillator(omega, freq, hr_factor, damping):
+    reorg_energy = freq * hr_factor
+    return 2. * reorg_energy * freq**2 * ((omega * damping) / ((omega**2 - freq**2)**2 + omega**2 * damping**2))
+
 fig,ax = plt.subplots()
 a = plt.plot(freq_values, ohmic_spectral_density(freq_values, 8.e-4, 5))
 b, = plt.plot(freq_values, drude_spectral_density(freq_values, 8.e-4, 5))
+c = plt.plot(freq_values, underdamped_brownian_oscillator(freq_values, 1., 0.01, 0.5))
 
 ax_reorg_energy = plt.axes([0.25, 0.1, 0.65, 0.03], axisbg='white')
 ax_cutoff = plt.axes([0.25, 0.15, 0.65, 0.03], axisbg='white')

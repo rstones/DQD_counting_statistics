@@ -10,11 +10,12 @@ import scipy.sparse.linalg as spla
 import numdifftools as ndt
 from quant_mech.hierarchy_solver import HierarchySolver
 import quant_mech.utils as utils
+from quant_mech.OBOscillator import OBOscillator
 
 class DQDHEOMModel():
     
     def __init__(self, Gamma_L, Gamma_R, bias, T_c, drude_reorg_energy=1.e-12, drude_cutoff=40., beta=1., \
-                 num_matsubara_freqs=0, temperature_correction=True, sites_to_couple=np.array([0,1,1])):
+                 K=0, temperature_correction=True):
         
         self.system_dimension = 3
         
@@ -35,14 +36,15 @@ class DQDHEOMModel():
         self.drude_reorg_energy = drude_reorg_energy
         self.drude_cutoff = drude_cutoff
         
-        self.num_matsubara_freqs = num_matsubara_freqs
+        self.num_matsubara_freqs = K
         self.temperature_correction = temperature_correction
-        self.sites_to_couple = sites_to_couple
-        self.heom_solver = HierarchySolver(self.system_hamiltonian(), self.drude_reorg_energy, self.drude_cutoff, \
+        self.environment = [(), \
+                            (OBOscillator(self.drude_reorg_energy, self.drude_cutoff, self.beta, K=K),), \
+                            (OBOscillator(self.drude_reorg_energy, self.drude_cutoff, self.beta, K=K),)]
+        self.heom_solver = HierarchySolver(self.system_hamiltonian(), self.environment, \
                                            self.beta, self.jump_operators, self.jump_rates, \
                                            num_matsubara_freqs=self.num_matsubara_freqs, \
-                                           temperature_correction=self.temperature_correction, \
-                                           sites_to_couple=self.sites_to_couple)
+                                           temperature_correction=self.temperature_correction)
         self.truncation_level = 4
         self.heom_solver.truncation_level = self.truncation_level
         #self.construct_heom()
@@ -68,11 +70,10 @@ class DQDHEOMModel():
 #             self.init_ss_vector = spla.eigs(self.heom.tocsc(), k=1, sigma=0, which='LM', maxiter=1000)[1]
 
     def heom_matrix(self):
-        self.heom_solver = HierarchySolver(self.system_hamiltonian(), self.drude_reorg_energy, self.drude_cutoff, \
+        self.heom_solver = HierarchySolver(self.system_hamiltonian(), self.environment, \
                                            self.beta, self.jump_operators, self.jump_rates, \
                                            num_matsubara_freqs=self.num_matsubara_freqs, \
-                                           temperature_correction=self.temperature_correction, \
-                                           sites_to_couple=self.sites_to_couple)
+                                           temperature_correction=self.temperature_correction)
         self.heom_solver.truncation_level = self.truncation_level
         return np.asarray(self.heom_solver.construct_hierarchy_matrix_super_fast().todense(), dtype='complex128')
 
