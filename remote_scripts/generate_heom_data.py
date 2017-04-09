@@ -19,7 +19,7 @@ beta = [1. / (k_B * T) for T in temperature][1:2]
 beta = beta[0]
 #reorg_energy = 0.000147
 cutoff = 5. # meV
-K = 6
+K = 11
 N = 6
 
 def environment(reorg_energy, beta, K):
