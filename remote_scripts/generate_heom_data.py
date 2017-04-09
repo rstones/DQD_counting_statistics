@@ -42,7 +42,7 @@ for i,E in enumerate(reorg_energy_values):
     n_vectors, higher_coupling_elements, higher_coupling_row_indices, higher_coupling_column_indices, \
         lower_coupling_elements, lower_coupling_row_indices, lower_coupling_column_indices = numba_funcs.generate_hierarchy_and_tier_couplings(num_dms, num_indices, N, dm_per_tier)
     higher_coupling_elements_list.append(higher_coupling_elements)
-    lower_coupling_elements_list.append(lower_coupling_elements)   
+    lower_coupling_elements_list.append(lower_coupling_elements)
         
 # n_vectors, row and col indices should be the same for each heom matrix? (where only reorg energy is being changed)
 # so only need to save coupling elements for each reorg energy

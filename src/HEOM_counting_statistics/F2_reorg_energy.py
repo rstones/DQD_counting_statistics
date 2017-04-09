@@ -23,7 +23,7 @@ beta = [1. / (k_B * T) for T in temperature][1:2]
 print beta
 #reorg_energy = 0.000147
 cutoff = 5. # meV
-K = 10
+K = 8
 
 def environment(reorg_energy, beta, K):
     return [(), \
@@ -45,7 +45,7 @@ model_pert = DissipativeDQDModel(Gamma_L, Gamma_R, bias, T_c, drude_spectral_den
 # model_heom.dv_pops[:model_heom.system_dimension**2] = np.array([1., 0, 0, 0, 1., 0, 0, 0, 1.])
 # print FCSSolver.stationary_state(hm, model_heom.dv_pops)[:9]
 
-reorg_energy_values = np.logspace(0, 4, 5)
+reorg_energy_values = np.logspace(-6, 0, 60)
 F2_heom = np.zeros((len(beta), reorg_energy_values.size))
 F2_pert = np.zeros((len(beta), reorg_energy_values.size))
 coh_heom = np.zeros((len(beta), reorg_energy_values.size))
@@ -83,7 +83,7 @@ for j,B in enumerate(beta):
 # mean_heom = np.append(data['mean_heom'], mean_heom)
 # mean_pert = np.append(data['mean_pert'], mean_pert)
 
-np.savez('../../data/HEOM_weak_coupling_F2_reorg_energy_drude_T2.7_N6_K10.npz', reorg_energy_values=reorg_energy_values, \
+np.savez('../../data/HEOM_weak_coupling_F2_reorg_energy_drude_T2.7_N6_K8_-6-0.npz', reorg_energy_values=reorg_energy_values, \
                     F2_heom=F2_heom.squeeze(), F2_pert=F2_pert.squeeze(), coh_heom=coh_heom.squeeze(), \
                     coh_pert=coh_pert.squeeze(), mean_heom=mean_heom.squeeze(), mean_pert=mean_pert.squeeze())
         
