@@ -11,3 +11,6 @@
 
 # ignore all files in data folder
 data/
+
+# temp log file
+remote_scripts/temp.log
