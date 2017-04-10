@@ -33,7 +33,7 @@ def generate_heom(reorg_energy):
     heom_matrix = model_heom.heom_matrix()
     np.savez('data/F2_reorg_energy_heom_data_vals_'+str(re_min)+'-'+str(re_max)+'_'+str(reorg_energy)+'.npz', reorg_energy=reorg_energy, \
                         indices=heom_matrix.indices, elements=heom_matrix.data, indptrs=heom_matrix.indptr)
-    
+     
 if __name__ == '__main__':
     pool = Pool(2)
     pool.map(generate_heom, reorg_energy_values)
@@ -41,7 +41,15 @@ if __name__ == '__main__':
 '''
 Sparse data saved in CSR format
 '''
-# np.savez('../data/F2_reorg_energy_heom_data_'+str(re_min)+'-'+str(re_max)+'.npz', reorg_energy_values=reorg_energy_values, indices=indices, \
-#                     elements=elements, indptrs=indptrs, shape=shape, jump_elements=J_elements, \
-#                     jump_indices=J_indices, jump_indptrs=J_indptrs, dv_pops=dv_pops)
+model_heom = DQDHEOMModelSparse(Gamma_L, Gamma_R, bias, T_c, beta=beta, environment=environment(1., beta, K), \
+                                K=K, tc=True, trunc_level=N)
+jump_matrix = model_heom.jump_matrix().tocsr()
+jump_elements = jump_matrix.data
+jump_indices = jump_matrix.indices
+jump_indptrs = jump_matrix.indptr
+dv_pops = model_heom.dv_pops
+shape = jump_matrix.shape
+
+np.savez('data/F2_reorg_energy_heom_data_vals_'+str(re_min)+'-'+str(re_max)+'.npz', reorg_energy_values=reorg_energy_values, \
+         shape=shape, jump_elements=jump_elements, jump_indices=jump_indices, jump_indptrs=jump_indptrs, dv_pops=dv_pops)
     
