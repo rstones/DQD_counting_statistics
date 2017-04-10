@@ -20,7 +20,7 @@ k_B = constants.physical_constants["Boltzmann constant in eV/K"][0] * 1.e3 # meV
 beta = [0.8, 0.4, 0.1]
 reorg_energy = 0.015 #0.00147 # meV 
 cutoff = 50. #5. # meV 
-K = 3
+K = 6
 
 def environment(beta, K):
     return [(), \
@@ -29,7 +29,7 @@ def environment(beta, K):
 
 model = DQDHEOMModelSparse(Gamma_L, Gamma_R, bias, T_c, beta=beta[0], environment=environment(beta[0], K), \
                            K=K, tc=True, trunc_level=5)
-bias_values = np.linspace(-1, 1, 100) * 10
+bias_values = np.linspace(-1, 1, 200) * 10
 mean = np.zeros((len(beta)+1, bias_values.size))
 F2 = np.zeros((len(beta)+1, bias_values.size))
 
@@ -71,6 +71,8 @@ for i,E in enumerate(bias_values):
 # mean[0] = np_data['mean'][::2]
 
 #np.savez('../../data/HEOM_F2_bias_drude_no_units.npz', mean=mean, F2=F2, bias_values=bias_values, beta=beta)
+
+np.savez('../../data/HEOM_F2_bias_drude_data.npz', bias_values=bias_values, F2=F2, beta=beta)
     
 import matplotlib.pyplot as plt
 import matplotlib
@@ -89,6 +91,8 @@ matplotlib.rc('font', **font)
 # plt.ylabel(r'current')
 # 
 # plt.subplot(122)
+
+plt.figure(figsize=(8,7))
 plt.plot(bias_values, F2[0], linewidth=3, ls='--', color='k', label='no phonons')
 for i,B in enumerate(beta):
     plt.plot(bias_values, F2[i+1], linewidth=3, label=r'$\beta = ' + str(beta[i]) + '$')
@@ -97,6 +101,6 @@ plt.xlim(-10.2, 10.2)
 plt.ylim(0.82, 1.25)
 plt.xlabel(r'bias $\epsilon / T_c$')
 plt.ylabel(r'Fano factor')
-
+plt.text(-9.7, 1.222, '(b)', fontsize=22)
 plt.legend(fontsize=14).draggable()
 plt.show()

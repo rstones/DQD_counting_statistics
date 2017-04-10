@@ -49,14 +49,17 @@ import matplotlib
 font = {'size':18}
 matplotlib.rc('font', **font)
 
+plt.figure(figsize=(8,7))
+
 plt.plot(bias_values, F2_values[0], linewidth=3, ls='--', color='k', label='no phonons')
 for i,B in enumerate(beta):
     plt.plot(bias_values, F2_values[i+1], linewidth=3, label=r'$\beta = ' + str(beta[i]) + '$')
-plt.axhline(1., ls='--', color='grey', linewidth=2)
+plt.axhline(1., ls='--', color='grey', linewidth=1)
 plt.xlim(-10.2, 10.2)
 plt.ylim(0.82, 1.25)
 plt.xlabel(r'bias $\epsilon / T_c$')
 plt.ylabel(r'Fano factor')
+plt.text(-9.7, 1.222, '(a)', fontsize=22)
 plt.legend(fontsize=14).draggable()
 plt.show()
     
