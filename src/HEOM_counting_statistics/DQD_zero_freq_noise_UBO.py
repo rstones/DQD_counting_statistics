@@ -11,20 +11,20 @@ import quant_mech.time_utils as tu
 from quant_mech.UBOscillator import UBOscillator
 from quant_mech.OBOscillator import OBOscillator
 
-Gamma_L = 0.1 # meV
-Gamma_R = 2.5e-3 # meV
+Gamma_L = 1. #0.1 # meV
+Gamma_R = 0.025 #2.5e-3 # meV
 bias = 0
-T_c = 0.1 # meV
+T_c = 1. #0.1 # meV
 temperature = [1.4, 2.7, 12.] # Kelvin
 k_B = constants.physical_constants["Boltzmann constant in eV/K"][0] * 1.e3 # meV / Kelvin
-beta = [1. / (k_B * T) for T in temperature]
-mode_freq = 1.
-hr_factor = 0.01
-damping = 0.5 # meV
-K = 3
+beta = [0.8, 0.4, 0.1][:1] #[1. / (k_B * T) for T in temperature]
+mode_freq = 10. # 1.
+hr_factor = 0.1 # 0.01
+damping = 5. # 0.5 # meV
+K = 4
 
-drude_reorg_energy = 0.00147
-drude_cutoff = 5.
+drude_reorg_energy = 0.015 # 0.00147
+drude_cutoff = 50. # 5.
 # OBOscillator(drude_reorg_energy, drude_cutoff, beta, K=K)
 
 def environment(beta, K):
@@ -34,7 +34,7 @@ def environment(beta, K):
 
 model = DQDHEOMModelSparse(Gamma_L, Gamma_R, bias, T_c, beta=beta[0], environment=environment(beta[0], K), \
                                         K=K, tc=True, trunc_level=6)
-bias_values = np.linspace(-1, 1, 50)
+bias_values = np.linspace(-10, 10, 20)
 mean = np.zeros((len(beta)+1, bias_values.size))
 F2 = np.zeros((len(beta)+1, bias_values.size))
 
@@ -45,7 +45,7 @@ for j,B in enumerate(beta):
     model.beta = B
     model.environment = environment(B, K)
     for i,E in enumerate(bias_values):
-        #print E
+        print E
         model.bias = E
         solver = FCSSolver(model.heom_matrix(), model.jump_matrix(), model.dv_pops)
         try:
@@ -55,6 +55,8 @@ for j,B in enumerate(beta):
             print "SINGULAR ERROR!!!!!!!"
             
 print "finished calculation at " + str(tu.getTime())
+
+np.savez('../../data/DQD_HEOM_UBO_mean_F2_bias_low_temp_data.npz', bias_values=bias_values, beta=beta, mean=mean, F2=F2)
         
 # model.drude_reorg_energy = 1.e-9
 # print 'for no phonons'
