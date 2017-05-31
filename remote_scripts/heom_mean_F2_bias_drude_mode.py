@@ -39,7 +39,7 @@ def do_the_calculation(N, K):
         return env
     
     model = DQDHEOMModelSparse(Gamma_L, Gamma_R, bias, T_c, beta=beta[0], environment=environment(beta[0], K), \
-                                            K=K, tc=True, trunc_level=N)
+                                            K=K, tc=True, trunc_level=N, dissipator_test=True)
     bias_values = np.linspace(-15, 15, 40)
     mean = np.zeros((len(beta), bias_values.size))
     F2 = np.zeros((len(beta), bias_values.size))

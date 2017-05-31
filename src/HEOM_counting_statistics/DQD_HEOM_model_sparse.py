@@ -13,7 +13,8 @@ import quant_mech.utils as utils
 
 class DQDHEOMModelSparse():
     
-    def __init__(self, Gamma_L, Gamma_R, bias, T_c, environment=[], beta=1., K=0, tc=True, trunc_level=5):
+    def __init__(self, Gamma_L, Gamma_R, bias, T_c, environment=[], beta=1., K=0, tc=True, trunc_level=5, \
+                 dissipator_test=False):
         
         self.system_dimension = 3
         
@@ -39,7 +40,8 @@ class DQDHEOMModelSparse():
         self.tc = tc
         self.heom_solver = HierarchySolver(self.system_hamiltonian(), self.environment, \
                                            self.beta, self.jump_operators, self.jump_rates, N=trunc_level,\
-                                           num_matsubara_freqs=self.K, temperature_correction=self.tc)
+                                           num_matsubara_freqs=self.K, temperature_correction=self.tc, \
+                                           dissipator_test=dissipator_test)
         self.truncation_level = trunc_level
         #self.heom_solver.truncation_level = self.truncation_level
         
