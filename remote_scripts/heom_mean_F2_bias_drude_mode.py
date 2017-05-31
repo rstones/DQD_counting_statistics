@@ -16,8 +16,8 @@ T_c = 1.
 beta = [0.8, 0.4, 0.1]
 
 mode_freq = 10.
-hr_factor = 0.1
-damping = 5.
+hr_factor = 0.5
+damping = 0.5
 
 drude_reorg_energy = 0.015
 drude_cutoff = 50.
@@ -40,7 +40,7 @@ def do_the_calculation(N, K):
     
     model = DQDHEOMModelSparse(Gamma_L, Gamma_R, bias, T_c, beta=beta[0], environment=environment(beta[0], K), \
                                             K=K, tc=True, trunc_level=N)
-    bias_values = np.linspace(-10, 10, 20)
+    bias_values = np.linspace(-15, 15, 40)
     mean = np.zeros((len(beta), bias_values.size))
     F2 = np.zeros((len(beta), bias_values.size))
     
@@ -62,6 +62,6 @@ def do_the_calculation(N, K):
                 
     print "finished calculation at " + str(tu.getTime())
     
-    np.savez('../data/DQD_HEOM_mean_F2_bias_UBO'+('_OBO' if drude else '')+'_N'+str(N)+'_K'+str(K)+'_data.npz', \
+    np.savez('../data/DQD_HEOM_mean_F2_bias_strong_coupling_UBO'+('_OBO' if drude else '')+'_N'+str(N)+'_K'+str(K)+'_data.npz', \
              bias_values=bias_values, beta=beta, mean=mean, F2=F2)
 
