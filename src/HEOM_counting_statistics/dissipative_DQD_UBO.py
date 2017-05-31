@@ -8,16 +8,16 @@ import scipy.constants as constants
 from counting_statistics.fcs_solver import FCSSolver
 from HEOM_counting_statistics.dissipative_DQD_model import DissipativeDQDModel
 
-Gamma_L = 0.1 # meV
-Gamma_R = 2.5e-3 # meV
+Gamma_L = 1. #0.1 # meV
+Gamma_R = 0.025 #2.5e-3 # meV
 bias = 0
-T_c = 0.1 # meV
+T_c = 1. #0.1 # meV
 temperature = [1.4, 2.7, 12.] # Kelvin
 k_B = constants.physical_constants["Boltzmann constant in eV/K"][0] * 1.e3 # meV / Kelvin
-beta = [1. / (k_B * T) for T in temperature]
-mode_freq = 1. # meV
-hr_factor = 0.01
-damping = 0.5 # meV
+beta = [0.8, 0.4, 0.1] #[1. / (k_B * T) for T in temperature]
+mode_freq = 10. #1. # meV
+hr_factor = 0.5
+damping = 0.5 #0.05 # meV
 cutoff = 5. # meV
 
 def underdamped_brownian_oscillator(freq, hr_factor, damping):
@@ -26,7 +26,7 @@ def underdamped_brownian_oscillator(freq, hr_factor, damping):
         return 2. * reorg_energy * freq**2 * ((delta * damping) / ((delta**2 - freq**2)**2 + delta**2 * damping**2))
     return J
 
-bias_values = np.linspace(-1., 1., 500)
+bias_values = np.linspace(-15., 15., 500)
 F2_values = np.zeros((len(beta)+1, bias_values.size))
 
 model = DissipativeDQDModel(Gamma_L, Gamma_R, 0, T_c, underdamped_brownian_oscillator(mode_freq, hr_factor, damping), 1.)
@@ -46,6 +46,8 @@ for i,E in enumerate(bias_values):
     solver.L = model.liouvillian()
     F2_values[0,i] = solver.second_order_fano_factor(0)
     
+np.savez('../../data/DQD_dissipative_F2_strong_coupling_UBO.npz', bias=bias_values, beta=beta, F2=F2_values)
+    
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -56,8 +58,8 @@ plt.plot(bias_values, F2_values[0], linewidth=3, ls='--', color='k', label='no p
 for i,B in enumerate(beta):
     plt.plot(bias_values, F2_values[i+1], linewidth=3, label='T = ' + str(temperature[i]) + 'K')
 plt.axhline(1., ls='--', color='grey', linewidth=2)
-plt.xlim(-1.05, 1.05)
-plt.ylim(0.72, 1.25)
+plt.xlim(-15.05, 15.05)
+plt.ylim(0.4, 1.25)
 plt.xlabel(r'bias $\epsilon$ (meV)')
 plt.ylabel(r'Fano factor')
 plt.legend(fontsize=14).draggable()

@@ -6,6 +6,8 @@ import quant_mech.time_utils as tu
 from quant_mech.UBOscillator import UBOscillator
 from quant_mech.OBOscillator import OBOscillator
 
+from multiprocessing import Pool
+
 Gamma_L = 1.
 Gamma_R = 0.025
 bias = 0
