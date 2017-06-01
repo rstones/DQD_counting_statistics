@@ -61,6 +61,8 @@ def do_the_calculation(N, K):
                 print "SINGULAR ERROR!!!!!!!"
                 
     print "finished calculation at " + str(tu.getTime())
+    np.savez('../data/DQD_HEOM_mean_F2_bias_strong_coupling_UBO'+('_OBO' if drude else '')+'_N'+str(N)+'_K'+str(K)+'_beta'+str(j)+'_data.npz', \
+             bias_values=bias_values, beta=beta, beta_index=j, mean=mean, F2=F2)
     
     np.savez('../data/DQD_HEOM_mean_F2_bias_strong_coupling_UBO'+('_OBO' if drude else '')+'_N'+str(N)+'_K'+str(K)+'_data.npz', \
              bias_values=bias_values, beta=beta, mean=mean, F2=F2)
