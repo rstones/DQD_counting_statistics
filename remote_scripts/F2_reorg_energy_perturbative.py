@@ -16,7 +16,7 @@ def drude_spectral_density(reorg_energy, cutoff):
 
 model_pert = DissipativeDQDModel(Gamma_L, Gamma_R, bias, T_c, drude_spectral_density(0,cutoff), beta)
 
-reorg_energy_values = np.logspace(-3, 5, 320)
+reorg_energy_values = np.logspace(-3, 15, 320)
 F2_pert = np.zeros(reorg_energy_values.size)
 coh_pert = np.zeros(reorg_energy_values.size)
 mean_pert = np.zeros(reorg_energy_values.size)
@@ -28,6 +28,6 @@ for i,E in enumerate(reorg_energy_values):
     F2_pert[i] = solver_pert.second_order_fano_factor(0)
     coh_pert[i] = np.abs(solver_pert.ss[3] + solver_pert.ss[4])
     
-np.savez('../data/F2_reorg_energy_perturbative_data.npz', reorg_energy_values=reorg_energy_values, F2=F2_pert, \
+np.savez('../data/F2_reorg_energy_perturbative_data_large_reorg_energy.npz', reorg_energy_values=reorg_energy_values, F2=F2_pert, \
                     mean=mean_pert, coh=coh_pert)
     

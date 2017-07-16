@@ -99,7 +99,7 @@ for i,B in enumerate(beta):
 plt.axhline(1, ls='--', color='grey')
 plt.xlim(-10.2, 10.2)
 plt.ylim(0.82, 1.25)
-plt.xlabel(r'bias $\epsilon / T_c$')
+plt.xlabel(r'bias $(1 / T_c)$')
 plt.ylabel(r'Fano factor')
 plt.text(-9.7, 1.222, '(b)', fontsize=22)
 plt.legend(fontsize=14).draggable()

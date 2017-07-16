@@ -43,6 +43,8 @@ for i,E in enumerate(bias_values):
     solver.L = model.liouvillian()
     F2_values[0,i] = solver.second_order_fano_factor(0)
     
+np.savez('../../data/DQD_dissipative_F2_bias_brandes_liouvillian.npz', bias_values=bias_values, beta_values=beta, F2=F2_values)
+    
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -57,7 +59,7 @@ for i,B in enumerate(beta):
 plt.axhline(1., ls='--', color='grey', linewidth=1)
 plt.xlim(-10.2, 10.2)
 plt.ylim(0.82, 1.25)
-plt.xlabel(r'bias $\epsilon / T_c$')
+plt.xlabel(r'bias $(1 / T_c)$')
 plt.ylabel(r'Fano factor')
 plt.text(-9.7, 1.222, '(a)', fontsize=22)
 plt.legend(fontsize=14).draggable()
