@@ -33,6 +33,10 @@ bias_values = np.linspace(-1, 1, 200) * 10
 mean = np.zeros((len(beta)+1, bias_values.size))
 F2 = np.zeros((len(beta)+1, bias_values.size))
 
+#coherence = np.zeros((len(beta)+1, bias_values.size))
+
+site_steady_states = np.zeros((len(beta)+1, bias_values.size, 9), dtype='complex128')
+
 print "Starting calculation at " + str(tu.getTime())
 
 for j,B in enumerate(beta):
@@ -46,6 +50,8 @@ for j,B in enumerate(beta):
         try:
             mean[j+1,i] = solver.mean()
             F2[j+1,i] = solver.second_order_fano_factor()
+            #coherence[j+1,i] = solver.ss[3].squeeze() + solver.ss[4].squeeze()
+            site_steady_states[j+1,i] = solver.ss[:9].squeeze()
         except RuntimeError:
             print "SINGULAR ERROR!!!!!!!"
             
@@ -60,7 +66,9 @@ for i,E in enumerate(bias_values):
     model.bias = E
     solver = FCSSolver(model.heom_matrix(), model.jump_matrix(), model.dv_pops)
     try:
+        mean[0,i] = solver.mean()
         F2[0,i] = solver.second_order_fano_factor()
+        site_steady_states[0,i] = solver.ss[:9].squeeze()
     except RuntimeError:
         print "SINGULAR ERROR!!!!!!!"
     
@@ -72,13 +80,16 @@ for i,E in enumerate(bias_values):
 
 #np.savez('../../data/HEOM_F2_bias_drude_no_units.npz', mean=mean, F2=F2, bias_values=bias_values, beta=beta)
 
-np.savez('../../data/HEOM_F2_bias_drude_data.npz', bias_values=bias_values, F2=F2, beta=beta)
-    
-import matplotlib.pyplot as plt
-import matplotlib
+np.savez('../../data/HEOM_F2_bias_drude_data_inc_steady_states.npz', \
+         bias_values=bias_values, mean=mean, F2=F2, beta=beta, site_steady_states=site_steady_states)
 
-font = {'size':18}
-matplotlib.rc('font', **font)
+import prettyplotlib as ppl
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+from prettyplotlib import brewer2mpl
+
+font = {'size':12}
+mpl.rc('font', **font)
 
 # plt.subplot(121)
 # plt.plot(bias_values, mean[0], linewidth=3, ls='--', color='k', label='no phonons')
@@ -92,15 +103,17 @@ matplotlib.rc('font', **font)
 # 
 # plt.subplot(122)
 
-plt.figure(figsize=(8,7))
-plt.plot(bias_values, F2[0], linewidth=3, ls='--', color='k', label='no phonons')
+plt.figure(figsize=(4,3.5))
+
+ppl.plot(bias_values, F2[0], linewidth=3, ls='--', color='k', label='no phonons', show_ticks=True)
 for i,B in enumerate(beta):
-    plt.plot(bias_values, F2[i+1], linewidth=3, label=r'$\beta = ' + str(beta[i]) + '$')
+    ppl.plot(bias_values, F2[i+1], linewidth=3, label=r'$\beta = ' + str(beta[i]) + '$', show_ticks=True)
 plt.axhline(1, ls='--', color='grey')
-plt.xlim(-10.2, 10.2)
-plt.ylim(0.82, 1.25)
-plt.xlabel(r'bias $(1 / T_c)$')
+#plt.xlim(-10.2, 10.2)
+#plt.ylim(0.82, 1.25)
+plt.xlabel(r'$\epsilon / T_c$')
 plt.ylabel(r'Fano factor')
-plt.text(-9.7, 1.222, '(b)', fontsize=22)
-plt.legend(fontsize=14).draggable()
+plt.text(-10, 1.25, 'b.', fontsize=12)
+plt.legend(fontsize=12).draggable()
+plt.tight_layout()
 plt.show()

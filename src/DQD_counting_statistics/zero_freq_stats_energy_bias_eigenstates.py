@@ -1,7 +1,7 @@
 '''
-Created on 21 Mar 2016
+Created on 9 Sep 2017
 
-@author: rstones
+@author: richard
 '''
 import numpy as np
 from counting_statistics.fcs_solver import FCSSolver
@@ -11,7 +11,7 @@ import matplotlib
 font = {'size':18}
 matplotlib.rc('font', **font)
 
-bias_values = np.linspace(-10, 10, 1000)
+bias_values = np.linspace(-10, 10, 100)
 T_c_values = np.array([0.5, 1., 2.])
 lindblad_ops = [np.array([[0,0,0],[1,0,0],[0,0,0]]), np.array([[0,0,1],[0,0,0],[0,0,0]])]
 Gamma_L = 1.
@@ -28,6 +28,10 @@ solver = FCSSolver.from_hilbert_space(dqd_hamiltonian(0, 1.), lindblad_ops, lind
 current = np.zeros((T_c_values.size, bias_values.size))
 F2 = np.zeros((T_c_values.size, bias_values.size))
 coherence = np.zeros((T_c_values.size, bias_values.size), dtype='complex128')
+
+site_steady_states = np.zeros((T_c_values.size, bias_values.size, 3, 3))
+site_exciton_transform = np.zeros((T_c_values.size, bias_values.size, 3, 3))
+exciton_steady_states = np.zeros((T_c_values.size, bias_values.size, 3, 3))
 
 for j,T_c in enumerate(T_c_values):
     for i,v in enumerate(bias_values):

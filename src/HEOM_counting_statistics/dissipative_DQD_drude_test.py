@@ -26,6 +26,11 @@ def drude_spectral_density(reorg_energy, cutoff):
 
 bias_values = np.linspace(-1., 1., 500) * 10
 F2_values = np.zeros((len(beta)+1, bias_values.size))
+coherence = np.zeros((len(beta)+1, bias_values.size))
+
+site_steady_states = np.zeros((len(beta)+1, bias_values.size, 5))
+# site_exciton_transform = np.zeros((len(beta)+1, bias_values.size, 3, 3))
+# exciton_steady_states = np.zeros((len(beta)+1, bias_values.size, 3, 3))
 
 model = DissipativeDQDModel(Gamma_L, Gamma_R, 0, T_c, drude_spectral_density(reorg_energy, cutoff), 1.)
 solver = FCSSolver(model.liouvillian(), model.jump_matrix(), np.array([1,1,1,0,0]))
@@ -36,32 +41,50 @@ for j,B in enumerate(beta):
         model.bias = E
         solver.L = model.liouvillian()
         F2_values[j+1,i] = solver.second_order_fano_factor(0)
+        coherence[j+1,i] = solver.ss[3] + solver.ss[4]
+        site_steady_states[j+1,i] = solver.ss
     
 model.spectral_density = drude_spectral_density(0, cutoff)
 for i,E in enumerate(bias_values):
     model.bias = E
     solver.L = model.liouvillian()
     F2_values[0,i] = solver.second_order_fano_factor(0)
+    coherence[0,i] = solver.ss[3] + solver.ss[4]
+    site_steady_states[0,i] = solver.ss
     
-np.savez('../../data/DQD_dissipative_F2_bias_brandes_liouvillian.npz', bias_values=bias_values, beta_values=beta, F2=F2_values)
-    
+np.savez('../../data/DQD_dissipative_F2_bias_brandes_liouvillian.npz', \
+         bias_values=bias_values, beta_values=beta, F2=F2_values, coherence=coherence, \
+         site_steady_states=site_steady_states)
+
+import prettyplotlib as ppl
 import matplotlib.pyplot as plt
-import matplotlib
+import matplotlib as mpl
+from prettyplotlib import brewer2mpl
 
-font = {'size':18}
-matplotlib.rc('font', **font)
+font = {'size':12}
+mpl.rc('font', **font)
 
-plt.figure(figsize=(8,7))
+fig,ax = ppl.subplots(1, 2, figsize=(8,3.5))
 
-plt.plot(bias_values, F2_values[0], linewidth=3, ls='--', color='k', label='no phonons')
+plt.sca(ax[0])
+ppl.plot(bias_values, F2_values[0], linewidth=3, ls='--', color='k', label='no phonons')
 for i,B in enumerate(beta):
-    plt.plot(bias_values, F2_values[i+1], linewidth=3, label=r'$\beta = ' + str(beta[i]) + '$')
-plt.axhline(1., ls='--', color='grey', linewidth=1)
-plt.xlim(-10.2, 10.2)
-plt.ylim(0.82, 1.25)
-plt.xlabel(r'bias $(1 / T_c)$')
-plt.ylabel(r'Fano factor')
-plt.text(-9.7, 1.222, '(a)', fontsize=22)
-plt.legend(fontsize=14).draggable()
+    ppl.plot(bias_values, F2_values[i+1], linewidth=3, label=r'$\beta = ' + str(beta[i]) + '$', show_ticks=True)
+ax[0].axhline(1., ls='--', color='grey', linewidth=1)
+#plt.xlim(-10.2, 10.2)
+#plt.ylim(0.82, 1.25)
+ax[0].set_xlabel(r'$\epsilon / \Gamma_L$')
+ax[0].set_ylabel(r'Fano factor')
+ax[0].text(-10, 1.25, 'a.', fontsize=12)
+ppl.legend(fontsize=12).draggable()
+
+plt.sca(ax[1])
+ppl.plot(bias_values, np.abs(coherence[0]), linewidth=3, ls='--', color='k', label='no phonons')
+for i,B in enumerate(beta):
+    ppl.plot(bias_values, np.abs(coherence[i+1]), linewidth=3, label=r'$\beta = ' + str(beta[i]) + '$', show_ticks=True)
+ax[1].set_xlabel(r'$\epsilon / \Gamma_L$')
+ax[1].set_ylabel(r'coherence $|\rho_{LR}|$')
+
+plt.tight_layout()
 plt.show()
     

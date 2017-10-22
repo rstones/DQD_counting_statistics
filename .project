@@ -5,6 +5,7 @@
 	<projects>
 		<project>counting_statistics</project>
 		<project>counting_statistics_old</project>
+		<project>prettyplotlib</project>
 		<project>quant_mech</project>
 	</projects>
 	<buildSpec>
